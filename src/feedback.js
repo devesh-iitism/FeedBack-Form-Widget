@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "./feedback.css";
 import html2canvas from 'html2canvas';
 import $ from 'jquery'; 
+var url;
 
 class feedback extends Component {
 	handleChange() {
@@ -9,6 +10,27 @@ class feedback extends Component {
             $("#show").show();
         else
             $("#show").hide();
+	}
+	
+	handleSubmitClick() {
+		const data = {};
+		let fback = $('textarea#feedbackText').val();
+		data.message = fback;
+		
+		if($('.form-check-input').is(":checked"))   
+			data.imageData = url;
+		
+		console.log(data);
+		fetch("https://reqbin.com/echo/post/json", {
+		  method: "POST",
+		  headers: [
+			["Content-Type", "application/json"],
+			["Content-Type", "text/plain"]
+		  ],
+		  credentials: "include",
+		  body: JSON.stringify(data)
+		});
+		alert("Feedback Submitted");
 	}
 	
 	handleClick() {
@@ -19,7 +41,7 @@ class feedback extends Component {
 			.then((canvas) => {
 				// const imgData = canvas.toDataURL('image/png');
 				// console.log(imgData);
-				var url = canvas.toDataURL();
+				url = canvas.toDataURL();
 
 				var newImg = document.createElement("img"); // create img tag
 			    newImg.src = url;
@@ -45,9 +67,9 @@ class feedback extends Component {
 						</button>
 					  </div>
 					  <div className="modal-body">
-						  <div className="modal-body-text">
-							  Have Feedback? We'd love to hear it, but please dont't share sensitive information. Have questions? Try help or support.
-						  </div>
+						  <textarea id="feedbackText"
+						placeholder="Have Feedback? We'd love to hear it, but please dont't share sensitive information. Have questions? Try help or support."
+					/>
 						  <div className="form-check">
 							  <input 
 								  onChange={this.handleChange}
@@ -64,7 +86,7 @@ class feedback extends Component {
 					  </div>
 					  <div className="modal-footer">
 						<button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-						<button type="button" className="btn btn-primary">Understood</button>
+						<button onClick={this.handleSubmitClick} type="button" className="btn btn-primary">Submit</button>
 					  </div>
 					</div>
 				  </div>
